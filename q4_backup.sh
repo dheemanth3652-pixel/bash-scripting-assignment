@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -----------------------------------------
-# Q4 - Automated Backup Script
+# Q4 - Advanced Backup Script
 # -----------------------------------------
 
 if [ $# -eq 0 ]; then
@@ -10,15 +10,25 @@ if [ $# -eq 0 ]; then
 fi
 
 dir=$1
-timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
 
+if [ ! -d "$dir" ]; then
+    echo "Directory does not exist."
+    exit 1
+fi
+
+timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
 backup_name="backup_${timestamp}.tar.gz"
 
+echo "Creating backup..."
 tar -czf $backup_name $dir
 
-echo "Backup created: $backup_name"
+if [ $? -eq 0 ]; then
+    echo "Backup created successfully: $backup_name"
+else
+    echo "Backup failed."
+fi
 
-# Delete backups older than 7 days
+echo "Removing backups older than 7 days..."
 find . -name "backup_*.tar.gz" -mtime +7 -delete
 
-echo "Old backups (older than 7 days) removed."
+echo "Backup process completed."
